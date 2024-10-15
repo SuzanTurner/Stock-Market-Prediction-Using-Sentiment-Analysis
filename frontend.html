@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis & Predictions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .results {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .prediction {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Stock Sentiment Analysis & Predictions</h1>
+        <p>Enter a stock symbol to get news sentiment and stock predictions:</p>
+        <input type="text" id="stockSymbol" placeholder="Enter stock symbol (e.g., AAPL)">
+        <br>
+        <button onclick="analyzeStock()">Analyze Stock</button>
+
+        <div class="results" id="results">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        async function analyzeStock() {
+            const stockSymbol = document.getElementById('stockSymbol').value.toUpperCase();
+
+            if (stockSymbol) {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ stockSymbol })
+                });
+
+                const data = await response.json();
+                displayResults(data);
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h3>Sentiment Score: ${data.sentiment_score}</h3>
+                <p>${data.investment_advice}</p>
+                <div class="prediction">
+                    <h4>Hourly Prediction:</h4>
+                    <p>${data.hourly_prediction}</p>
+                </div>
+                <div class="prediction">
+                    <h4>Daily Prediction:</h4>
+                    <p>${data.daily_prediction}</p>
+                </div>
+                <div class="prediction">
+                    <h4>Weekly Prediction:</h4>
+                    <p>${data.weekly_prediction}</p>
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>
